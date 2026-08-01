@@ -166,10 +166,3 @@ erDiagram
    fields) when corrected via `update_field/2` or `correct_document_type/2`
    — the latter also deletes and re-triggers extraction for the corrected
    type.
-
-## Learn more (Phoenix)
-
-* Official website: https://www.phoenixframework.org/
-* Guides: https://hexdocs.pm/phoenix/overview.html
-* Docs: https://hexdocs.pm/phoenix
-* Deployment: https://hexdocs.pm/phoenix/deployment.html
