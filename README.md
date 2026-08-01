@@ -1,5 +1,7 @@
 # DocPipeline
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 DocPipeline is a Phoenix application for managing construction loan
 projects and the documents (invoices, budgets, change orders, pay
 applications) submitted against them. Uploaded documents are classified
