@@ -29,13 +29,7 @@ defmodule DocPipeline.Workers.ProcessDocumentWorker do
          {:ok, extracted} <- extract_data(domain_type, raw_text),
          {:ok, _} <- save_extracted(document, extracted) do
       Documents.update_document_status(document, "processed")
-
-      # Broadcast completion
-      Phoenix.PubSub.broadcast(
-        DocPipeline.PubSub,
-        "document:#{document_id}",
-        {:document_processed, document_id}
-      )
+      broadcast_update(document_id)
 
       :ok
     else
@@ -46,8 +40,18 @@ defmodule DocPipeline.Workers.ProcessDocumentWorker do
           Documents.update_document_status(doc, "failed", inspect(reason))
         end
 
+        broadcast_update(document_id)
+
         {:error, reason}
     end
+  end
+
+  defp broadcast_update(document_id) do
+    Phoenix.PubSub.broadcast(
+      DocPipeline.PubSub,
+      "document:#{document_id}",
+      {:document_updated, document_id}
+    )
   end
 
   defp extract_text(%{content_type: "application/pdf"} = doc) do

@@ -16,6 +16,8 @@ defmodule DocPipeline.Documents.Document do
   @valid_statuses ~w(uploaded processing processed failed requires_review)
   @valid_sources ~w(system user)
 
+  def valid_types, do: @valid_types
+
   schema "documents" do
     field :filename, :string
     field :content_type, :string

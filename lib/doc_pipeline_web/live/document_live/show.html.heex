@@ -1,0 +1,91 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@document.filename}
+    <:subtitle>
+      <span class={["badge", status_badge_class(@document.status)]}>{@document.status}</span>
+      <span :if={@document.error_message} class="text-error ml-2">{@document.error_message}</span>
+    </:subtitle>
+    <:actions>
+      <.button navigate={~p"/projects/#{@project_id}"}>Back to documents</.button>
+    </:actions>
+  </.header>
+
+  <div class="card bg-base-200 p-4 mb-6">
+    <h2 class="font-semibold mb-2">Document type</h2>
+
+    <form phx-submit="correct_type" class="flex items-end gap-2">
+      <.input
+        type="select"
+        id="domain_type"
+        name="domain_type"
+        label="Type"
+        value={@document.domain_type}
+        options={Enum.map(Document.valid_types(), &{humanize_type(&1), &1})}
+        prompt="Select a type"
+      />
+      <.button type="submit" variant="primary">Correct type</.button>
+    </form>
+
+    <p :if={@document.domain_type_source == "user"} class="text-sm text-base-content/60 mt-1">
+      Manually corrected by a user
+    </p>
+  </div>
+
+  <div class="card bg-base-200 p-4 mb-6">
+    <h2 class="font-semibold mb-4">Extracted fields</h2>
+
+    <p :if={@document.fields == []} class="text-base-content/60">
+      No fields extracted yet.
+    </p>
+
+    <div
+      :for={field <- @document.fields}
+      class="flex items-center gap-3 py-2 border-b border-base-300 last:border-0"
+    >
+      <span class="w-48 font-medium">{field.field_name}</span>
+
+      <form
+        :if={@editing_field_id == field.id}
+        phx-submit="save_field"
+        class="flex items-center gap-2 flex-1"
+      >
+        <input type="hidden" name="field_id" value={field.id} />
+        <input
+          type="text"
+          name="value"
+          value={field.field_value}
+          class="input input-sm flex-1"
+          autofocus
+        />
+        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+        <button type="button" phx-click="cancel_edit" class="btn btn-sm btn-ghost">Cancel</button>
+      </form>
+
+      <div :if={@editing_field_id != field.id} class="flex items-center gap-2 flex-1">
+        <span class="flex-1">{field.field_value}</span>
+        <span class="badge badge-outline badge-sm">{field.source}</span>
+        <span :if={field.confidence} class="text-xs text-base-content/60">
+          {Float.round(field.confidence, 2)}
+        </span>
+        <button phx-click="edit_field" phx-value-id={field.id} class="btn btn-sm btn-ghost">
+          Edit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-200 p-4">
+    <h2 class="font-semibold mb-4">Line items</h2>
+
+    <p :if={@document.line_items == []} class="text-base-content/60">
+      No line items extracted yet.
+    </p>
+
+    <.table :if={@document.line_items != []} id="line-items" rows={@document.line_items}>
+      <:col :let={item} label="Description">{item.description}</:col>
+      <:col :let={item} label="Category">{item.category}</:col>
+      <:col :let={item} label="Amount">{Decimal.to_string(item.amount)}</:col>
+      <:col :let={item} label="Source">{item.source}</:col>
+    </.table>
+  </div>
+</Layouts.app>

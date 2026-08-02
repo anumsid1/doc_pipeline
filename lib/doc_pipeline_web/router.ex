@@ -18,6 +18,10 @@ defmodule DocPipelineWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/projects", ProjectLive.Index, :index
+    live "/projects/:id", ProjectLive.Show, :show
+    live "/projects/:project_id/documents/:id", DocumentLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

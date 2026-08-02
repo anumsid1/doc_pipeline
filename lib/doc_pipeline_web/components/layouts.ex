@@ -45,6 +45,9 @@ defmodule DocPipelineWeb.Layouts do
       <div class="flex-none">
         <ul class="flex flex-column px-1 space-x-4 items-center">
           <li>
+            <a href="/projects" class="btn btn-ghost">Projects</a>
+          </li>
+          <li>
             <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
           </li>
           <li>

@@ -1,0 +1,62 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@project.name}
+    <:subtitle>{@project.address}</:subtitle>
+    <:actions>
+      <.button navigate={~p"/projects"}>Back to projects</.button>
+    </:actions>
+  </.header>
+
+  <div class="card bg-base-200 p-4 mb-6">
+    <h2 class="font-semibold mb-2">Upload document</h2>
+
+    <form phx-submit="upload" phx-change="validate">
+      <.live_file_input upload={@uploads.document} class="file-input w-full mb-2" />
+
+      <div :for={entry <- @uploads.document.entries} class="flex items-center gap-2 text-sm mb-2">
+        <span>{entry.client_name}</span>
+        <progress class="progress w-32" value={entry.progress} max="100" />
+        <button
+          type="button"
+          phx-click="cancel_upload"
+          phx-value-ref={entry.ref}
+          class="btn btn-ghost btn-xs"
+        >
+          Cancel
+        </button>
+        <p :for={err <- upload_errors(@uploads.document, entry)} class="text-error text-xs">
+          {upload_error_to_string(err)}
+        </p>
+      </div>
+
+      <.button type="submit" variant="primary" disabled={@uploads.document.entries == []}>
+        Upload
+      </.button>
+    </form>
+  </div>
+
+  <.header>
+    Documents
+    <:actions>
+      <.button phx-click="refresh">Refresh</.button>
+    </:actions>
+  </.header>
+
+  <.table
+    :if={@documents != []}
+    id="documents"
+    rows={@documents}
+    row_click={fn doc -> JS.navigate(~p"/projects/#{@project.id}/documents/#{doc.id}") end}
+  >
+    <:col :let={doc} label="Filename">{doc.filename}</:col>
+    <:col :let={doc} label="Type">{doc.domain_type || "—"}</:col>
+    <:col :let={doc} label="Status">
+      <span class={["badge", status_badge_class(doc.status)]}>{doc.status}</span>
+    </:col>
+    <:col :let={doc} label="Uploaded">{Calendar.strftime(doc.inserted_at, "%Y-%m-%d %H:%M")}</:col>
+  </.table>
+
+  <p :if={@documents == []} class="text-base-content/60">
+    No documents uploaded yet.
+  </p>
+</Layouts.app>
