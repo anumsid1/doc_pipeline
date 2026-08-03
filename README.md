@@ -24,10 +24,6 @@ API is exposed over GraphQL (Absinthe).
 mix setup
 ```
 
-This runs `deps.get`, `ecto.create`, `ecto.migrate`, `run priv/repo/seeds.exs`,
-and the asset pipeline setup/build, as defined in the `setup` alias in
-`mix.exs`.
-
 ### Environment variables
 
 For real (non-mock) AI classification/extraction, set an Anthropic API
@@ -47,8 +43,6 @@ Production additionally requires `DATABASE_URL`, `SECRET_KEY_BASE`, and
 ## Running the server
 
 ```bash
-mix phx.server
-# or, with an interactive shell:
 iex -S mix phx.server
 ```
 
